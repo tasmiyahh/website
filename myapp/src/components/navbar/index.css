@@ -1,0 +1,53 @@
+.nav{
+    display: flex;
+    justify-content: space-between;
+    background-color: black;
+     
+   
+  }
+
+  .nav > .userName {
+    color: white;
+    margin: 10px;
+    padding: 5px 10px 5px 10px;
+}
+
+
+  
+  
+  
+  .nav>ul{
+    display: flex;
+    justify-content: space-around;
+  }
+  
+  .nav>ul>li{
+    display: flex;
+  
+    justify-content: space-between;
+    border: 1px solid #3399FF;
+    margin: 5px;
+    border-radius: 5px;
+  
+    color: white;
+  }
+  
+  .nav>ul>li>a{
+    display: flex;
+    list-style: none;
+    justify-content: space-around;
+    text-decoration: none;
+    padding: 5px;
+    margin: 5px;
+    color: #3399FF;
+  }
+  .logout{
+    color: #3399FF;
+    text-decoration: none;
+    list-style: none;
+
+  }
+  h1{
+    text-align: center;
+    padding: 0px 20px;
+  };

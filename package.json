@@ -1,0 +1,38 @@
+{
+  "name": "website",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.mjs",
+    "server": "nodemon server.mjs",
+    "dev": "nodemon server.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tasmiyahh/website.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tasmiyahh/website/issues"
+  },
+  "homepage": "https://github.com/tasmiyahh/website#readme",
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "bcrypt-inzi": "^1.0.7",
+    "concurrently": "^7.5.0",
+    "config": "^3.3.8",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "express-validator": "^6.14.2",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.7.0",
+    "nodemon": "^2.0.20",
+    "path": "^0.12.7",
+    "stripe": "^10.15.0",
+    "validator": "^13.7.0"
+  }
+}

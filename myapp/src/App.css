@@ -1,0 +1,40 @@
+
+.nav{
+  display: flex;
+  justify-content: space-between;
+   
+ 
+}
+
+
+
+.nav>ul{
+  display: flex;
+  justify-content: space-around;
+}
+
+.nav>ul>li{
+  display: flex;
+
+  justify-content: space-between;
+  border: 1px solid #3399FF;
+  margin: 5px;
+  border-radius: 5px;
+
+  color: white;
+}
+
+.nav>ul>li>a{
+  display: flex;
+  list-style: none;
+  justify-content: space-around;
+  text-decoration: none;
+  padding: 5px;
+  margin: 5px;
+  color: #3399FF;
+}
+
+h1{
+  text-align: center;
+  padding: 0px 20px;
+}
