@@ -5,6 +5,8 @@ import { reducer } from './reducer';
 export const GlobalContext = createContext("InitialValue"); //this is reducers intial value
 let InitialValue  = { //these value goes to state
   user: {},
+  cart : [],
+  bill : 0,
   darkTheme: true,
   isLogin: null,
 }

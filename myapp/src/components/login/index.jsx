@@ -47,7 +47,7 @@ export default function Login() {
     axios.post(`${baseUrl}/login`, {
      email : data.get('email'),
      password : data.get('password')
-    }, {withCredentials:true})
+    },{withCredentials:true} )
     .then(function (response) {
       console.log("response:" ,response.data);
       alert(response.data.message);

@@ -1,6 +1,6 @@
 import express from 'express';
 import mongoose from 'mongoose';
-//import path from 'path';
+import path from 'path';
 import { stringToHash, varifyHash } from "bcrypt-inzi"
 import jwt from 'jsonwebtoken';
 import stripe from 'stripe'
@@ -75,10 +75,11 @@ const ItemSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    category:{
-        type: String,
-        required: true
-    },
+    //  category:{
+    //      type: String,
+    //     required: true
+    // }
+    
     price: {
         type: Number,
         required: true
@@ -364,8 +365,51 @@ app.get("/profile/:id", async (req, res) => { //this part is used jb pg refresh 
 app.post("/item" ,(req,res) => {
     const newItem = new Item(req.body);
     console.log("item add")
-    newItem.save().then(item => res.send(item));
+    newItem.save().then(item => res.send(item))
+    
 })
+
+
+// app.post('/item', async(req, res) => {
+//     console.log("product received", req.body)
+//     let newProduct = new Item({
+//         title: req.body.title,
+//         description: req.body.description,
+//         price: req.body.price
+      
+//          })
+//       try {
+//         let response = await newProduct.save()
+//         console.log("product added", response)
+       
+//         res.send({
+//           message: "product added",
+//           data: {
+//             title: req.body.title,
+//             description: req.body.description,
+//             price : req.body.price,
+          
+//              }
+//         })
+    
+//       }
+    
+//       catch (error) {
+//         console.log("failed to add product" , error)
+//         res.status(500).send({
+//           message: "failed to add product"
+//         })
+//       }
+// })
+
+
+   
+
+
+  
+
+   
+   
 
 
 app.put('/item/:id' , (req,res) => {
@@ -433,7 +477,10 @@ app.get("/cart/:id", async (req,res) => {
     try{
         let cart = await Cart.findOne({userId});
         if(cart && cart.items.length>0){
-            res.send(cart);
+            res.send({
+                items : cart.items,
+                data : cart
+            });
             console.log("get cart")
         }
         else{

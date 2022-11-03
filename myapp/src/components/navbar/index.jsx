@@ -42,8 +42,11 @@ const NavBar = () => {
           <ul>
               <li>
             <Link to="/profile">profile</Link> </li>
-            <li><Link  className="logout" onClick={logoutHandler}>logout</Link></li>
+           <li><Link to="/products">products</Link> </li>
+           <li><Link to ="/shop">shop</Link></li>
+           <li><Link to ="/cart">cart</Link></li>
             <li><Link to ="/">home</Link></li>
+            <li><Link  className="logout" onClick={logoutHandler}>logout</Link></li>
           
           </ul>
           </> 
