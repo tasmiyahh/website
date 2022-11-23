@@ -8,6 +8,46 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 //import bcrypt from 'bcrypt'
 import pkg from 'validator'
+import fs from 'fs'
+import admin from "firebase-admin";
+
+
+import multer from 'multer';
+const storageConfig = multer.diskStorage({ // https://www.npmjs.com/package/multer#diskstorage
+    destination: './uploads/',
+    filename: function (req, file, cb) {
+
+        console.log("mul-file: ", file);
+        cb(null, `${new Date().getTime()}-${file.originalname}`)
+    }
+})
+var upload = multer({ storage: storageConfig })
+
+var serviceAccount = { //ye hum apna laye h storagebucket k siide pe project seting me service account generate krk
+
+    "type": "service_account",
+    "project_id": "website-45ab7",
+    "private_key_id": "3e377522299d45dbe4fd9afe421902a523c64a2c",
+    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDD/fCPQYyw3Mt5\nlOKYbYdj3zVqqWzZ/Ob/VUabKQB1ikAp7hgeNCpKMP2HeKxBLjWKA8d+emkyhHtf\n8gBQ2JdEr7rLIjKx12DeUe1xmZlnXAQsCJuQIzjQMaCitUHup148CRIHE7AvDVTC\nqGGPuggNkB2aOv4mMpNaoaY3cqwyDcaS006dBzAX6/UvazHuNxIzsTxeKyFo8TTI\nXlTc1K1PiI6lCk0sxyPXZ+raFiCacqZ4UF5esP6qsGbrZyVIY7rgacKkYsfhOSgL\ncBcO5XTTTPw7UHjml1KGhzr0R8Zwzj3nGVJZNdRXWgD7TNiFJMkhlEVlJJrSJins\nGHjKJL/NAgMBAAECggEABVvsN/6S2kMvTSPFDmXwTcrMqx322/8OUe0DATsdyBj/\nqCXagvjqLx0n0Yx7KU0aKavwyISQW9FDjlwPpiZF/JrRgLxupm49N9cFpxWMHEdn\n1cxmdIqCAy9YNRq/ssbgzMNyur7PEnpK1wfDoypzDevi41S5nlHDtba11M5N5xBt\nGQPwIXhDye8wi86qGGcZEFyHKQKOK2EVxkRZzHzCnBOFEJ3XNMXWInCc41ze38wy\n4l+n7ip3xYQKTXDxwqQ1oc0K4z2cGqAOdl0cngnuQBx+suf1UO4XYXdVCvjzOgtT\nT6so1KUAk2ogGmmX4cBbOuJO8u6vvM4RE1axtaugAQKBgQDsg1uqdRbYNK07lj8w\nKFVWsFH0ZF+WBn3YQNTfBUpieRymMgthiFN5fIQtp8LP/AeuS+Cv7SbWoUIDoaHC\nWJdHKS/EFk1shrEXAck/ddXZElXmXehYuLPTcrgtg+mo58gkX+Jy5LUGIaXmfU9D\n7wze+3ouS5ByXoi4tZOu82QreQKBgQDUI+QMhr1Obj+DdLaXntqqcpLHL0OpZNfE\nnzu8lFFHSh4H27k7RN/SUMhoDqVH87FxhTdaLulO5XVFXLxbkTtFJI8J8XDhCMtW\n+kizuCAjdkmKhZk8n7AF/2vWQKeD9vHn9SWooD3GJnXi/Jr3iXzq1Cr4ow80hjbj\nTEQRNyIN9QKBgHQLz8JHSTo0PntqMP7UC2tJgCzFwxC9hqnAxbHXyrOecSwqieMF\nHNATBFfSZIfgRXSDzm8DkXbmEJnviIrvJOrJjqJLvxlszR9YxQHaM18a3AL4OLSv\ni6xIMY5DlzZE47LVSSrOhPPJNrls6qOOe2Y9RanJccpsD/FxRlElIxUhAoGBALSh\ntt1/oRN2RnhtWcgyh+hYVGhr80X6Ssrt9tR0ydxU3Ms+KTOxSo9vH6WSyuNAOhf6\nIY6VoSz/rmIYO34QZJJUNcN2pPHIJjPyOxNkNWFcp/PeHAOFyUDiIvU06i4wh/xF\nPgKeJtthBkH3axBZLldZvxkk5p6HpZbW6qJp+oI9AoGBANmGIuVjzZaz/rlV3Ljd\ndHZglt9xH9zdbNBTFO5z+sNy6nq5YJPO9pYsP22bxUSvUXZPkE4oTe0hF50RQ7lb\nllVw0Obijf/0f31ATk+PQwIZz7+DlZeOLcDYc5n1+ufUTgmMteGhDeiL+JGpTaZA\nUjdifQi5uWu0O9yLYqKsJAzv\n-----END PRIVATE KEY-----\n",
+    "client_email": "firebase-adminsdk-tj38b@website-45ab7.iam.gserviceaccount.com",
+    "client_id": "109732218905582444559",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-tj38b%40website-45ab7.iam.gserviceaccount.com"
+  }
+  
+
+
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: "https://website-45ab7.firebaseio.com" //apni project ki id lgo
+});
+const bucket = admin.storage().bucket("gs://website-45ab7.appspot.com");
+
+
+
+
 
 
 const {isEmail} = pkg
@@ -75,6 +115,8 @@ const ItemSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+
+    
     //  category:{
     //      type: String,
     //     required: true
@@ -84,6 +126,7 @@ const ItemSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    productimage: { type: String, required: true },
     date_added: {
         type: Date,
         default: Date.now
@@ -109,7 +152,9 @@ const CartSchema = new mongoose.Schema({
             min: [1, 'Quantity can not be less then 1.'],
             default: 1
         },
-        price: Number
+        price: Number,
+        productimage: { type: String, required: true },
+  
     }],
     bill: {
         type: Number,
@@ -362,45 +407,89 @@ app.get("/profile/:id", async (req, res) => { //this part is used jb pg refresh 
     }
 })
 
-app.post("/item" ,(req,res) => {
-    const newItem = new Item(req.body);
-    console.log("item add")
-    newItem.save().then(item => res.send(item))
+// app.post("/item" ,(req,res) => {
+//     const newItem = new Item(req.body);
+//     console.log("item add")
+//     newItem.save().then(item => res.send(item))
     
-})
-
-
-// app.post('/item', async(req, res) => {
-//     console.log("product received", req.body)
-//     let newProduct = new Item({
-//         title: req.body.title,
-//         description: req.body.description,
-//         price: req.body.price
-      
-//          })
-//       try {
-//         let response = await newProduct.save()
-//         console.log("product added", response)
-       
-//         res.send({
-//           message: "product added",
-//           data: {
-//             title: req.body.title,
-//             description: req.body.description,
-//             price : req.body.price,
-          
-//              }
-//         })
-    
-//       }
-    
-//       catch (error) {
-//         console.log("failed to add product" , error)
-//         res.status(500).send({
-//           message: "failed to add product"
-//         })
-//       }
 // })
+
+
+
+
+app.post('/item', upload.any(), async(req, res) => {
+    console.log("product received", req.body)
+
+    console.log("files", req.files[0])
+
+
+  
+
+    bucket.upload(
+        req.files[0].path,
+        {
+            destination: `productPhotos/${req.files[0].filename}`, // give destination name if you want to give a certain name to file in bucket, include date to make name unique otherwise it will replace previous file with the same name
+        },
+        function (err, file, apiResponse ) {
+            if (!err) {
+                // console.log("api resp: ", apiResponse);
+
+                // https://googleapis.dev/nodejs/storage/latest/Bucket.html#getSignedUrl
+                file.getSignedUrl({
+                    action: 'read',
+                    expires: '03-09-2491'
+                }).then(async (urlData, err) => {
+                    if (!err) {
+                        console.log("public downloadable url: ", urlData[0]) // this is public downloadable url 
+
+                        // delete file from folder before sending response back to client (optional but recommended)
+                        // optional because it is gonna delete automatically sooner or later
+                        // recommended because you may run out of space if you dont do so, and if your files are sensitive it is simply not safe in server folder
+                        try {
+                            fs.unlinkSync(req.files[0].path)
+                            //file removed
+                        } catch (err) {
+                            console.error(err)
+                        }
+
+
+                        let newProduct = new Item({
+                            title: req.body.title,
+                            description: req.body.description,
+                            price: req.body.price,
+                           productimage : urlData[0],
+                             })
+                          try {
+                            let response = await newProduct.save()
+                            console.log("product added", response)
+                            console.log(urlData[0])
+                            res.send({
+                              message: "product added",
+                              data: {
+                                title: req.body.tite,
+                                description: req.body.description,
+                                price : req.body.price,
+                                productimage: urlData[0],
+                                 }
+                            })
+                        
+                          }
+                        
+                          catch (error) {
+                            console.log("failed to add product" , error)
+                            res.status(500).send({
+                              message: "failed to add product"
+                            })
+                          }
+                    }
+                })
+            } else {
+                console.log("err: ", err)
+                res.status(500).send();
+            }
+        });
+
+    })
 
 
    
@@ -493,6 +582,21 @@ app.get("/cart/:id", async (req,res) => {
     }
 })
 
+
+app.get("/carts", async (req, res) => { //this part is used jb pg refresh bhi kren or data show ho
+
+    try {
+        let carts = await Cart.find({}).exec();
+        res.send({
+           data : carts
+        });  //user means single user ye reducer wala nh h
+
+    } catch (error) {
+        res.status(500).send({ message: "error getting carts" });
+    }
+})
+
+
 app.post('/cart/:id' , async (req,res) => { // this id of url is productid
     const userId = req.params.id;
     const { productId, quantity } = req.body;
@@ -505,6 +609,7 @@ app.post('/cart/:id' , async (req,res) => { // this id of url is productid
         }
         const price = item.price;
         const name = item.title;
+        const productimage = item.productimage
 
         if(cart){
             // if cart exists for the user
@@ -518,7 +623,7 @@ app.post('/cart/:id' , async (req,res) => { // this id of url is productid
                 cart.items[itemIndex] = productItem;
             }
             else {
-                cart.items.push({ productId, name, quantity, price });
+                cart.items.push({ productId, name, quantity, price , productimage });
             }
             cart.bill += quantity*price;
             cart = await cart.save();

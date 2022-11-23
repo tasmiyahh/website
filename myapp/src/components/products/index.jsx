@@ -17,8 +17,8 @@ function Product() {
   useEffect(() => {
 
     let getAllUsers = async () => {
-     //  let response = await axios.get('https://storage-bucket-production.up.railway.app/products');
-     let response = await axios.get('http://localhost:5000/items');
+      //  let response = await axios.get('https://storage-bucket-production.up.railway.app/products');
+      let response = await axios.get('http://localhost:5000/items');
 
       setUsers(response.data)
     }
@@ -33,32 +33,63 @@ function Product() {
   const producthandler = async (e) => {
     e.preventDefault();
 
-    
+    var productimage = document.getElementById("productimage");
+    console.log("fileInput: ", productimage.files); // local url
 
 
-    
 
-    axios.post('http://localhost:5000/item',
-    {
-      
-        title : title,
-      description : description,
-        price : price,
-     
-      
-    },{withCredentials:true}
-    )
+    let formData = new FormData();
+    // https://developer.mozilla.org/en-US/docs/Web/API/FormData/append#syntax
+
+
+    formData.append("title", title); // this is how you add some text data along with file
+    formData.append("description", description); // this is how you add some text data along with file
+    formData.append("price", price); // this is how you add some text data along with file
+    formData.append("productimage", productimage.files[0]); // file input is for browser only, use fs to read file in nodejs client
+
+
+    axios({
+      method: 'post',
+      //url: "https://storage-bucket-production.up.railway.app/product",
+      url: "http://localhost:5000/item",
+      data: formData,
+      headers: { 'Content-Type': 'multipart/form-data' },
+      withCredentials: true
+    })
       .then(res => {
         console.log(`upload Success` + res.data);
         setToggleRefresh(!toggleRefresh)
       })
       .catch(err => {
-        console.log(err , "failed to upload product");
-
+        console.log(err);
       })
   }
 
-  
+
+
+
+
+  //   axios.post('http://localhost:5000/item',
+  //   {
+
+  //       title : title,
+  //     description : description,
+  //       price : price,
+
+
+  //   },{withCredentials:true}
+  //   )
+  //     .then(res => {
+  //       console.log(`upload Success` + res.data);
+  //       setToggleRefresh(!toggleRefresh)
+  //     })
+  //     .catch(err => {
+  //       console.log(err , "failed to upload product");
+
+  //     })
+  // }
+
+
 
   let edithandler = (e) => {
     e.preventDefault();
@@ -67,13 +98,13 @@ function Product() {
 
 
     axios.put(`http://localhost:5000/item/${editProduct?._id}`,
-    
-   // axios.put(`https://storage-bucket-production.up.railway.app/product/${editProduct?._id}`,
+
+      // axios.put(`https://storage-bucket-production.up.railway.app/product/${editProduct?._id}`,
       {
         title: editProduct.title,
         price: editProduct.price,
         description: editProduct.description,
-        
+
       }
     )
       .then(function (response) {
@@ -100,17 +131,30 @@ function Product() {
       <div className="head">
         <form onSubmit={producthandler}>
           <h1>PRODUCT FORM</h1>
-          title: <input name="title" type="text"value={title} placeholder="title" id='title' onChange={(e) => { setTitle(e.target.value) }} />
+          title: <input name="title" type="text" value={title} placeholder="title" id='title' onChange={(e) => { setTitle(e.target.value) }} />
           <br />
           description: <input name="description" type="text" placeholder="description" id='description' onChange={(e) => { setDescription(e.target.value) }} />
           <br />
           price: <input name="price" type="Number" placeholder="price" id='price' onChange={(e) => { setPrice(e.target.value) }} />
           <br />
 
-        
+          productimage: <input type="file" id="productimage" accept='image/*'
+            onChange={() => {
+              ////// to display imager instantly on screen
+              var productimage = document.getElementById("productimage");
+              var url = URL.createObjectURL(productimage.files[0])
+              console.log("url: ", url);
+              document.getElementById("img").innerHTML = `<img width="200px" src="${url}" alt="" id="img"> `
+            }} />
 
 
-         
+          <div id="img" ></div>
+
+
+
+
+
+
 
           <br />
           <button type='submit'>product add</button>
@@ -120,7 +164,7 @@ function Product() {
         {(editProduct !== null) ?
           (<div>
             <form onSubmit={edithandler}>
-            <h1>EDIT FORM</h1>
+              <h1>EDIT FORM</h1>
               title : <input type="text" onChange={(e) => {
                 setEditProduct({ ...editProduct, title: e.target.value })
               }} value={editProduct?.title} /> <br />
@@ -146,7 +190,7 @@ function Product() {
         {users.map(eachProduct => (
           <div key={eachProduct.id}>
             <div className='product'>
-              {/* <img className="productimg" width="120px" src={eachProduct.productimage} alt="" /> */}
+              <img className="productimg" width="120px" src={eachProduct.productimage} alt="" /> 
               <h4>{eachProduct.title}</h4>
               <p className='description'>{eachProduct.description}</p>
               <p ><span className='price'>{eachProduct.price}</span><span>pkr</span></p>
@@ -172,15 +216,15 @@ function Product() {
               }>delete</button> <br />
               <button onClick={() => {
                 setEditProduct({
-                  _id : eachProduct?._id,
+                  _id: eachProduct?._id,
                   title: eachProduct?.title,
                   description: eachProduct?.description,
                   price: eachProduct?.price,
-                
+
                 })
               }}>edit product</button>
 
-             
+
 
               <hr />
             </div>
@@ -192,7 +236,7 @@ function Product() {
 
 
 
-        </div>
+    </div>
   );
 }
 
